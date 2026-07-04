@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="system">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,8 @@
    TOKENS
 ============================================================ */
 :root{
+  --nav-scrim:     rgba(10,13,16,.78);
+  --grid-dot:      rgba(255,255,255,.06);
   --bg:            #0A0D10;
   --bg-soft:       #0D1115;
   --panel:         #12171C;
@@ -24,9 +26,11 @@
   --text-1:        #EDF1F3;
   --text-2:        #99A6B0;
   --text-3:        #5C6870;
-  --mint:          #4FF3C0;
+  --mint:          #48e1b1;
+  --mint-ink:      var(--mint);
   --mint-dim:      rgba(79,243,192,.12);
   --coral:         #FF6B57;
+  --coral-ink:     var(--coral);
   --coral-dim:     rgba(255,107,87,.12);
   --amber:         #FFC857;
   --amber-dim:     rgba(255,200,87,.12);
@@ -38,6 +42,44 @@
   --radius-lg:     16px;
   --ease:          cubic-bezier(.16,.84,.44,1);
 }
+
+/* ============================================================
+   THEME OVERRIDES (light mode)
+============================================================ */
+html[data-theme="light"]{
+  --nav-scrim:     rgba(246,248,249,.86);
+  --grid-dot:      rgba(18,24,29,.07);
+  --bg:            #F6F8F9;
+  --bg-soft:       #EFF2F4;
+  --panel:         #FFFFFF;
+  --panel-2:       #F5F7F8;
+  --line:          #DEE4E8;
+  --line-soft:     #E7EBEE;
+  --text-1:        #12181D;
+  --text-2:        #4B5860;
+  --text-3:        #64707A;
+  --mint-ink:      #065F46;
+  --coral-ink:     #9C3324;
+}
+@media (prefers-color-scheme: light){
+  html[data-theme="system"]{
+    --nav-scrim:     rgba(246,248,249,.86);
+    --grid-dot:      rgba(18,24,29,.07);
+    --bg:            #F6F8F9;
+    --bg-soft:       #EFF2F4;
+    --panel:         #FFFFFF;
+    --panel-2:       #F5F7F8;
+    --line:          #DEE4E8;
+    --line-soft:     #E7EBEE;
+    --text-1:        #12181D;
+    --text-2:        #4B5860;
+    --text-3:        #64707A;
+    --mint-ink:      #065F46;
+    --coral-ink:     #9C3324;
+  }
+}
+html{ transition:background .3s var(--ease); }
+body{ transition:background .3s var(--ease), color .3s var(--ease); }
 
 *,*::before,*::after{ box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
@@ -58,7 +100,7 @@ h1,h2,h3,h4{ margin:0; font-family:var(--font-display); font-weight:600; letter-
 p{ margin:0; }
 button{ font-family:inherit; cursor:pointer; }
 
-::selection{ background:var(--mint); color:var(--bg); }
+::selection{ background:var(--mint); color:#06110D; }
 
 /* scrollbar */
 ::-webkit-scrollbar{ width:10px; }
@@ -79,7 +121,7 @@ button{ font-family:inherit; cursor:pointer; }
 .eyebrow{
   display:inline-flex; align-items:center; gap:10px;
   font-family:var(--font-mono); font-size:12.5px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--mint); margin-bottom:18px;
+  text-transform:uppercase; color:var(--mint-ink); margin-bottom:18px;
 }
 .eyebrow::before{
   content:''; width:7px; height:7px; border-radius:50%; background:var(--mint);
@@ -91,7 +133,7 @@ button{ font-family:inherit; cursor:pointer; }
 .grid-bg{
   position:absolute; inset:0; pointer-events:none; opacity:.5;
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 1px);
+    radial-gradient(circle at 1px 1px, var(--grid-dot) 1px, transparent 1px);
   background-size:34px 34px;
   mask-image:radial-gradient(ellipse 60% 50% at 50% 20%, black, transparent 75%);
 }
@@ -125,8 +167,45 @@ button{ font-family:inherit; cursor:pointer; }
 .btn-primary{ background:var(--mint); color:#06110D; }
 .btn-primary:hover{ background:#6FF7CE; transform:translateY(-2px); }
 .btn-ghost{ background:transparent; color:var(--text-1); border-color:var(--line); }
-.btn-ghost:hover{ border-color:var(--mint); color:var(--mint); transform:translateY(-2px); }
+.btn-ghost:hover{ border-color:var(--mint); color:var(--mint-ink); transform:translateY(-2px); }
 .btn svg{ width:15px; height:15px; }
+
+/* ============================================================
+   THEME TOGGLE
+============================================================ */
+.theme-toggle{
+  position:fixed; bottom:28px; right:28px; z-index:150;
+  width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--panel); border:1px solid var(--line); color:var(--text-1);
+  box-shadow:0 6px 22px rgba(0,0,0,.28);
+  transition:transform .25s var(--ease), border-color .25s, color .25s, background .3s var(--ease);
+}
+.theme-toggle:hover{ transform:translateY(-3px); border-color:var(--mint); color:var(--mint-ink); }
+.theme-toggle:active{ transform:scale(.93); }
+.theme-toggle svg{ width:20px; height:20px; display:none; }
+.theme-toggle .icon-system{ display:block; }
+html[data-theme="light"] .theme-toggle .icon-system{ display:none; }
+html[data-theme="light"] .theme-toggle .icon-light{ display:block; }
+html[data-theme="dark"] .theme-toggle .icon-system{ display:none; }
+html[data-theme="dark"] .theme-toggle .icon-dark{ display:block; }
+
+/* ============================================================
+   BACK TO TOP
+============================================================ */
+.back-to-top{
+  position:fixed; bottom:92px; right:28px; z-index:150;
+  width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--panel); border:1px solid var(--line); color:var(--text-1);
+  box-shadow:0 6px 22px rgba(0,0,0,.28);
+  opacity:0; transform:translateY(10px); pointer-events:none;
+  transition:transform .25s var(--ease), border-color .25s, color .25s, background .3s var(--ease), opacity .3s var(--ease);
+}
+.back-to-top.is-visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
+.back-to-top:hover{ transform:translateY(-3px); border-color:var(--mint); color:var(--mint-ink); }
+.back-to-top.is-visible:active{ transform:scale(.93); }
+.back-to-top svg{ width:20px; height:20px; }
 
 /* ============================================================
    NAV
@@ -137,7 +216,7 @@ button{ font-family:inherit; cursor:pointer; }
   transition:border-color .3s, background .3s, backdrop-filter .3s;
 }
 .nav.is-scrolled{
-  background:rgba(10,13,16,.78); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  background:var(--nav-scrim); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
   border-bottom-color:var(--line-soft);
 }
 .nav-inner{ display:flex; align-items:center; justify-content:space-between; height:76px; }
@@ -165,11 +244,11 @@ button{ font-family:inherit; cursor:pointer; }
 
 .mobile-menu{
   position:fixed; inset:0; z-index:99; background:var(--bg);
-  display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:26px;
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:18px;
   padding:32px; transform:translateY(-100%); transition:transform .45s var(--ease); opacity:0;
 }
 .mobile-menu.is-open{ transform:translateY(0); opacity:1; }
-.mobile-menu a{ font-family:var(--font-display); font-size:30px; color:var(--text-1); }
+.mobile-menu a{ font-family:var(--font-display); font-size:clamp(19px,6vw,24px); color:var(--text-1); }
 .mobile-menu .btn{ margin-top:12px; }
 
 /* ============================================================
@@ -181,7 +260,7 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .hero-inner{ display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center; width:100%; }
 .hero-eyebrow{
-  font-family:var(--font-mono); font-size:13px; color:var(--mint); letter-spacing:.14em;
+  font-family:var(--font-mono); font-size:13px; color:var(--mint-ink); letter-spacing:.14em;
   text-transform:uppercase; display:flex; align-items:center; gap:10px; margin-bottom:26px;
 }
 .hero-eyebrow .pulse-dot{ width:8px; height:8px; border-radius:50%; background:var(--mint); box-shadow:0 0 0 0 var(--mint-dim); animation:pulseDot 2s infinite; }
@@ -216,7 +295,7 @@ button{ font-family:inherit; cursor:pointer; }
 .scan-line{ animation:scanMove 4.2s linear infinite; }
 @keyframes scanMove{ 0%{ transform:translateY(-210px); opacity:0; } 10%{ opacity:.9; } 90%{ opacity:.9; } 100%{ transform:translateY(210px); opacity:0; } }
 .rig-tag{
-  position:absolute; font-family:var(--font-mono); font-size:10.5px; color:var(--mint);
+  position:absolute; font-family:var(--font-mono); font-size:10.5px; color:var(--mint-ink);
   background:rgba(79,243,192,.08); border:1px solid rgba(79,243,192,.25); border-radius:5px;
   padding:3px 7px; white-space:nowrap;
 }
@@ -288,8 +367,8 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .project-card:hover::before{ transform:scaleX(1); }
 .project-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; }
-.project-tag{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--mint); background:var(--mint-dim); padding:5px 10px; border-radius:999px; }
-.project-tag.alt{ color:var(--coral); background:var(--coral-dim); }
+.project-tag{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--mint-ink); background:var(--mint-dim); padding:5px 10px; border-radius:999px; }
+.project-tag.alt{ color:var(--coral-ink); background:var(--coral-dim); }
 .project-link{
   width:34px; height:34px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; flex-shrink:0;
   transition:border-color .25s, background .25s, transform .25s;
@@ -323,23 +402,23 @@ button{ font-family:inherit; cursor:pointer; }
 .cert-count span{ font-size:11px; color:var(--text-3); text-transform:uppercase; letter-spacing:.06em; }
 .course-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
 .course-cell{ background:var(--bg-soft); padding:16px 18px; }
-.course-cell .num{ font-family:var(--font-mono); font-size:10.5px; color:var(--mint); margin-bottom:6px; display:block; }
+.course-cell .num{ font-family:var(--font-mono); font-size:10.5px; color:var(--mint-ink); margin-bottom:6px; display:block; }
 .course-cell .name{ font-size:13.3px; color:var(--text-1); font-weight:500; margin-bottom:4px; }
 .course-cell .items{ font-size:12px; color:var(--text-3); line-height:1.6; }
 
 .pro-cert-banner{
   display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
   background:linear-gradient(120deg, rgba(79,243,192,.09), rgba(79,243,192,.02));
-  border:1px solid rgba(79,243,192,.28); border-radius:12px; padding:22px 26px; margin:28px 0;
+  border:1px solid rgba(63, 177, 141, 0.4); border-radius:12px; padding:22px 26px; margin:28px 0;
   transition:border-color .25s, transform .25s;
 }
 .pro-cert-banner:hover{ border-color:rgba(79,243,192,.55); transform:translateY(-2px); }
-.pro-cert-badge{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--mint); }
+.pro-cert-badge{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--mint-ink); }
 .pro-cert-left h4{ font-size:19px; color:var(--text-1); margin:8px 0 6px; }
 .pro-cert-date{ font-family:var(--font-mono); font-size:12px; color:var(--text-3); }
 .pro-cert-cta{
   display:inline-flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:13px;
-  color:var(--mint); white-space:nowrap; padding:11px 18px; border:1px solid rgba(79,243,192,.4); border-radius:8px;
+  color:var(--mint-ink); white-space:nowrap; padding:11px 18px; border:1px solid rgba(63, 177, 141, 0.4); border-radius:8px;
 }
 .pro-cert-cta svg{ width:14px; height:14px; }
 
@@ -360,7 +439,7 @@ button{ font-family:inherit; cursor:pointer; }
 .tl-item{ position:relative; padding-bottom:44px; }
 .tl-item:last-child{ padding-bottom:0; }
 .tl-item::before{ content:''; position:absolute; left:-36px; top:4px; width:13px; height:13px; border-radius:50%; background:var(--bg); border:2px solid var(--mint); }
-.tl-date{ font-family:var(--font-mono); font-size:12px; color:var(--mint); margin-bottom:8px; letter-spacing:.04em; }
+.tl-date{ font-family:var(--font-mono); font-size:12px; color:var(--mint-ink); margin-bottom:8px; letter-spacing:.04em; }
 .tl-title{ font-size:19px; margin-bottom:6px; }
 .tl-sub{ color:var(--text-2); font-size:14.5px; }
 
@@ -381,7 +460,7 @@ button{ font-family:inherit; cursor:pointer; }
 .contact-actions{ display:flex; justify-content:center; gap:16px; margin-top:38px; flex-wrap:wrap; position:relative; z-index:1; }
 .contact-links{ display:flex; justify-content:center; gap:28px; margin-top:48px; flex-wrap:wrap; position:relative; z-index:1; }
 .contact-link{ display:flex; align-items:center; gap:9px; font-family:var(--font-mono); font-size:13px; color:var(--text-2); transition:color .25s; }
-.contact-link:hover{ color:var(--mint); }
+.contact-link:hover{ color:var(--mint-ink); }
 .contact-link svg{ width:16px; height:16px; }
 .copy-toast{
   position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
@@ -394,10 +473,8 @@ button{ font-family:inherit; cursor:pointer; }
    FOOTER
 ============================================================ */
 .footer{ border-top:1px solid var(--line-soft); padding:36px 0; }
-.footer-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
+.footer-inner{ display:flex; justify-content:center; align-items:center; text-align:center; }
 .footer-inner p{ font-family:var(--font-mono); font-size:12px; color:var(--text-3); }
-.footer-inner .back-top{ font-family:var(--font-mono); font-size:12px; color:var(--text-2); display:flex; align-items:center; gap:6px; }
-.footer-inner .back-top:hover{ color:var(--mint); }
 
 /* ============================================================
    RESPONSIVE
@@ -413,6 +490,7 @@ button{ font-family:inherit; cursor:pointer; }
 @media (max-width:880px){
   .nav-links{ display:none; }
   .nav-cta .btn-ghost{ display:none; }
+  .nav-cta .btn-primary{ display:none; }
   .nav-burger{ display:flex; }
   .hero-inner{ grid-template-columns:1fr; }
   .hero-visual{ order:-1; margin-bottom:20px; }
@@ -430,6 +508,17 @@ button{ font-family:inherit; cursor:pointer; }
   .pro-cert-banner{ flex-direction:column; align-items:flex-start; }
   .hero-stats{ gap:24px; }
   .contact-links{ flex-direction:column; align-items:center; gap:18px; }
+  .theme-toggle{ bottom:20px; right:20px; }
+  .back-to-top{ bottom:84px; right:20px; }
+}
+@media (max-width:420px){
+  .nav-logo{ font-size:13px; gap:8px; }
+  .nav-logo .avatar{ width:26px; height:26px; }
+  .theme-toggle, .back-to-top{ width:46px; height:46px; }
+  .theme-toggle svg, .back-to-top svg{ width:18px; height:18px; }
+  .back-to-top{ bottom:76px; right:20px; }
+  .contact-actions{ flex-direction:column; align-items:stretch; }
+  .contact-actions .btn{ justify-content:center; }
 }
 </style>
 </head>
@@ -449,7 +538,7 @@ button{ font-family:inherit; cursor:pointer; }
       <a href="#contact" data-nav>Contact</a>
     </div>
     <div class="nav-cta">
-      <a class="btn btn-ghost" href="MuhammadAbdullahCV.pdf" download="Muhammad-Abdullah-Resume.pdf">Resume</a>
+      <a class="btn btn-ghost" href="MuhammadAbdullahSoftwareEngineerCV.pdf" download="Muhammad-Abdullah-Resume.pdf">Resume</a>
       <a class="btn btn-primary" href="#contact">Say Hello</a>
       <button class="nav-burger" id="burger" aria-label="Open menu"><span></span></button>
     </div>
@@ -477,6 +566,7 @@ button{ font-family:inherit; cursor:pointer; }
       <p class="hero-sub">I'm Muhammad Abdullah, a software engineer finishing my Computer Science degree at FAST-NUCES. I build full-stack web platforms including MERN-based apps and the systems around them, from backend architecture to computer-vision and AI components, end to end.</p>
       <div class="hero-actions">
         <a href="#projects" class="btn btn-primary">View Projects<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg></a>
+        <a class="btn btn-ghost" href="MuhammadAbdullahCV.pdf" download="Muhammad-Abdullah-Resume.pdf">Resume</a>
         <a href="#contact" class="btn btn-ghost">Get In Touch</a>
       </div>
       <div class="hero-stats">
@@ -599,7 +689,7 @@ button{ font-family:inherit; cursor:pointer; }
           <a class="project-link" href="https://smart-movie-explorer.vercel.app" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg></a>
         </div>
         <h3 class="project-name">Tensor Film | Smart Movie Explorer | MERN Stack | Next.js</h3>
-        <p class="project-desc">An AI movie discovery platform that classifies user intent - mood, specific title, or trivia - using Gemini AI, then cross-references TMDB for movie data and caches results in Redis for performance. Full-stack architecture with JWT authentication and MongoDB-backed watchlists - containerized with Docker, with the Express/Node backend deployed on Render and the Next.js frontend on Vercel.</p>
+        <p class="project-desc">An AI movie discovery platform that classifies user intent - mood, specific title, or trivia - using Gemini AI, then cross-references TMDB for movie data and caches results in Redis for performance. Backend built with Express and Node.js, handling JWT-based authentication and MongoDB-backed user profiles for watchlists and favorites. The Next.js/TypeScript frontend renders recommendations with posters, trailers, and an interactive cinema mode. Fully containerized with Docker for local development, with the backend deployed on Render and the frontend on Vercel.</p>
         <div class="project-tech"><span>Next.js</span><span>Express.js</span><span>MongoDB</span><span>Redis</span><span>Gemini AI</span><span>Render + Vercel</span></div>
       </div>
 
@@ -608,17 +698,17 @@ button{ font-family:inherit; cursor:pointer; }
           <span class="project-tag alt">Final Year Project</span>
         </div>
         <h3 class="project-name">BioMechAI | Real-Time Fitness Trainer | Flutter App</h3>
-        <p class="project-desc">A smartphone-based AI trainer that tracks 33 body landmarks in real time to recognize exercises, count reps, and validate form - no wearables required. Built with Flutter, MediaPipe, and PoseConv3D, with a React trainer dashboard. 5 of 9 planned modules are shipped, with more on the way.</p>
-        <div class="project-tech"><span>Flutter</span><span>MediaPipe</span><span>PoseConv3D</span><span>React Dashboard</span></div>
+        <p class="project-desc">A real-time AI fitness trainer that tracks 33 body landmarks at ~30 FPS via MediaPipe, using a custom Random Forest classifier to recognize 7+ exercises from 1,050+ training videos at ~85% confidence. The Flutter app handles automatic exercise detection, rep counting, and weight logging, syncing sessions to Firebase. A Flask backend on Render extracts 21 joint-movement features and serves classification via REST API, while a React trainer dashboard lets certified trainers review AI-annotated sessions and send direct feedback - built end-to-end across a 3-member team.</p>
+        <div class="project-tech"><span>Flutter</span><span>MediaPipe</span><span>Random Forest</span><span>Flask</span><span>React</span><span>Firebase</span></div>
       </div>
 
       <div class="project-card reveal">
         <div class="project-top">
           <span class="project-tag alt">Deep Learning</span>
         </div>
-        <h3 class="project-name">Neural Storyteller | Image Text Generator | GenerativeAI</h3>
-        <p class="project-desc">An image-to-text deep learning pipeline: a ResNet50 encoder extracts a semantic feature vector from an image, and an LSTM decoder generates a word-by-word caption or short story from it - covering preprocessing, training, and inference end to end.</p>
-        <div class="project-tech"><span>ResNet50</span><span>LSTM</span><span>Computer Vision</span><span>TensorFlow / Keras</span></div>
+        <h3 class="project-name">Neural Storyteller | Image Captioning Pipeline | ResNet50 + LSTM</h3>
+        <p class="project-desc">An image-to-text deep learning pipeline: a pre-trained ResNet50 extracts a 2048-dimensional feature vector from each image, decoded by a multi-layer LSTM into a word-by-word caption. Trained on Flickr30k (31,000 images, 5 captions each) using teacher forcing, with Beam Search (k=5) at inference for more descriptive, less repetitive output. Deployed via Gradio for real-time caption generation from user-uploaded images.</p>
+        <div class="project-tech"><span>ResNet50</span><span>LSTM</span><span>Flickr30k</span><span>Beam Search</span><span>Gradio</span></div>
       </div>
 
       <div class="project-card reveal">
@@ -789,7 +879,7 @@ button{ font-family:inherit; cursor:pointer; }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg>
           aejshah@gmail.com
         </a>
-        <a class="btn btn-ghost" href="tel:+923254468655">+92 325 4468655</a>
+        <a class="btn btn-ghost" href="https://wa.me/923254468655">+92 325 4468655</a>
       </div>
       <div class="contact-links">
         <a class="contact-link" target="_self" href="https://www.linkedin.com/in/abdullahej/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/><path d="M10 9v12M10 13a4 4 0 0 1 8 0v8"/></svg>LinkedIn</a>
@@ -803,11 +893,20 @@ button{ font-family:inherit; cursor:pointer; }
 <footer class="footer">
   <div class="container footer-inner">
     <p>© 2026 Muhammad Abdullah. Every line written, tested, and shipped solo.</p>
-    <a class="back-top" href="#home">Back to top ↑</a>
   </div>
 </footer>
 
 <div class="copy-toast" id="copyToast">Email copied to clipboard</div>
+
+<button class="back-to-top" id="backToTop" type="button" aria-label="Back to top" title="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Theme: System, click to change" title="Theme: System">
+  <svg class="icon-system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
+  <svg class="icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
 
 <script>
 (function(){
@@ -875,6 +974,51 @@ button{ font-family:inherit; cursor:pointer; }
       tagAnkle.textContent = 'ANKLE_L · x' + ax + ' y' + ay;
     }, 1600);
   }
+
+  /* ---------- Theme toggle: system / light / dark ---------- */
+  var htmlEl = document.documentElement;
+  var themeToggle = document.getElementById('themeToggle');
+  var themeOrder = ['system','light','dark'];
+  var themeLabels = { system:'System', light:'Light', dark:'Dark' };
+
+  var metaThemeColor = document.querySelector('meta[name="theme-color"]');
+  var prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+
+  function applyTheme(theme){
+    htmlEl.setAttribute('data-theme', theme);
+    themeToggle.setAttribute('title', 'Theme: ' + themeLabels[theme]);
+    themeToggle.setAttribute('aria-label', 'Theme: ' + themeLabels[theme] + ', click to change');
+    if(metaThemeColor){
+      var isLight = theme === 'light' || (theme === 'system' && prefersLight.matches);
+      metaThemeColor.setAttribute('content', isLight ? '#F6F8F9' : '#0A0D10');
+    }
+  }
+
+  var storedTheme = 'system';
+  try{ storedTheme = localStorage.getItem('theme') || 'system'; } catch(e){}
+  applyTheme(storedTheme);
+
+  themeToggle.addEventListener('click', function(){
+    var current = htmlEl.getAttribute('data-theme') || 'system';
+    var next = themeOrder[(themeOrder.indexOf(current) + 1) % themeOrder.length];
+    try{ localStorage.setItem('theme', next); } catch(e){}
+    applyTheme(next);
+  });
+
+  prefersLight.addEventListener('change', function(){
+    if(htmlEl.getAttribute('data-theme') === 'system'){ applyTheme('system'); }
+  });
+
+  /* ---------- Back to top ---------- */
+  var backToTop = document.getElementById('backToTop');
+  function onScrollBackToTop(){
+    backToTop.classList.toggle('is-visible', window.scrollY > 480);
+  }
+  window.addEventListener('scroll', onScrollBackToTop, { passive:true });
+  onScrollBackToTop();
+  backToTop.addEventListener('click', function(){
+    window.scrollTo({ top:0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
 
   /* ---------- Copy email to clipboard ---------- */
   var emailBtn = document.getElementById('emailBtn');
